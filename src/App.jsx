@@ -9,6 +9,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import Navbar from './component/Navbar'
 import Card from './element/Card'
 import ModalForm from './component/ModalForm'
+import HorizontalScroll from './component/HorizontalScroll'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,21 +17,7 @@ function App() {
   return (
     <div style={{backgroundColor:'var(--dark)'}} className='min-vh-100'>
       <Navbar/>
-      <div className='col-lg-3 col-md-4 col-6'>
-        <Card
-          note={'Dalam konteks pemrograman JavaScript, modularization merupakan teknik dalam memecah atau menggunakan kode dalam berkas JavaScript secara terpisah berdasarkan tanggung jawabnya masing-masing.'}
-          title={'Functional Component'}
-          date={'Kamis, 14 April 2022'}
-          textBtn={'Archieve'}
-          // styleBtn={{backgroundColor:'var(--warning)', color:'var(--dark)'}}
-          classNameBtn={'btnNote col-12 rounded-4'}
-          styleEdit={{color:'var(--info-light)'}}
-          styleDiv={{
-            color:'var(--light',
-            backgroundColor:'var(--primary)'
-          }}
-          />
-      </div>
+      <HorizontalScroll/>
           <ModalForm
             number={50}
           />

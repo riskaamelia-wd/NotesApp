@@ -4,7 +4,7 @@ const Card = ({title, date, note, styleEdit, styleDiv, styleBtn, classNameBtn, t
     return(
         <div 
             style={styleDiv}
-            className="p-2 pb-3 m-1 rounded-3"
+            className="p-2 pb-3 ms-0 me-4 m-3 rounded-3"
         >
             <div className="d-flex flex-row justify-content-between mb-2" >
                 <div className="col-9" >
