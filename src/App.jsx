@@ -8,12 +8,13 @@ import 'bootstrap/dist/js/bootstrap.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import Navbar from './component/Navbar'
 import Card from './element/Card'
+import ModalForm from './component/ModalForm'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
+    <div style={{backgroundColor:'var(--dark)'}} className='min-vh-100'>
       <Navbar/>
       <div className='col-lg-3 col-md-4 col-6'>
         <Card
@@ -28,9 +29,12 @@ function App() {
             color:'var(--light',
             backgroundColor:'var(--primary)'
           }}
-        />
+          />
       </div>
-    </>
+          <ModalForm
+            number={50}
+          />
+    </div>
   )
 }
 

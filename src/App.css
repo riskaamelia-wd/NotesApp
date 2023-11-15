@@ -18,8 +18,12 @@
   color: var(--primary);
 }
 
+.form-control::-webkit-input-placeholder {
+  color: var(--primary) !important;
+}
+
 .btnArchieve{
-  background-color: var(--secondary) !important;
+  background-color: var(--success) !important;
   color: var(--primary) !important;
   font-size: 10px !important;
   font-size: 12px !important;
@@ -41,6 +45,24 @@
   background-color: var(--dark) !important;
   color: var(--warning) !important;
   font-size: 12px !important;
+}
+
+.btnBuat{
+  background-color: var(--primary) !important;
+  color: var(--light) !important;
+}
+
+.btnBuat:hover{
+  background-color: var(--secondary) !important;
+  color: var(--primary) !important;
+}
+
+.btnForm{
+  color: white !important;
+}
+
+.btnForm:hover{
+  color: var(--warning) !important;
 }
 /* .logo {
   height: 6em;
