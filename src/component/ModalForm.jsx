@@ -5,7 +5,7 @@ const ModalForm = ({number, onClick, onClickBtn, onChangeInput, onChangeTextarea
         <>
             <button
                 onClick={onClick}
-                type="type"
+                type="button"
                 // className={className? className : ''}
                 className="btn btnForm border border-0 position-fixed bottom-0 end-0 me-4 mb-4"
                 data-bs-toggle='modal'
@@ -61,6 +61,7 @@ const ModalForm = ({number, onClick, onClickBtn, onChangeInput, onChangeTextarea
                             >
                                 <Button
                                     className={'col-12 rounded-3 btnBuat'}
+                                    dataBsDismiss="modal" 
                                     text={'Buat'}
                                     type={'submit'}
                                     onClick={onClickBtn}
