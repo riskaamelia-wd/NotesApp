@@ -43,22 +43,30 @@ const index = () => {
         date:''
     })
   }
-  const [archivedData, setArchivedData] = useState([]);
-  const [activeData, setActiveData] = useState([]);
+    const [archivedData, setArchivedData] = useState([]);
+    const [activeData, setActiveData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const notes = useSelector(state=>state.note.notes)
     const dispatch = useDispatch()
     console.log(notes);
     const processData = (data) => {
-        const archived = data.filter(item => item.archived === true);
-        const active = data.filter(item => item.archived === false);
+        const archived = data.filter((item) =>
+            item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        ).filter((item) =>
+            item.archived === true 
+        );
+        const active = data.filter((item) =>
+            item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        ).filter((item) =>
+            item.archived === false 
+        );
+            
         setArchivedData(archived);
         setActiveData(active);
     };
     useEffect(() => {
         processData(notes);
-        console.log(notes, 'fdat');
-        // setData(notes)
-    }, [notes, data]);
+    }, [notes, data, searchTerm]);
 
     const handleArchived = (id, shouldArchive) => {
         const dataIndex = notes.findIndex(item => item.id === id);
@@ -78,9 +86,16 @@ const index = () => {
     }
     
     
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+    
     return(
         <>
-            <Navbar/>
+            <Navbar
+                value={searchTerm}
+                onChange={handleSearch}
+            />
                 <Form
                     number={50}
                     show={show}
