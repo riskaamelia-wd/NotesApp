@@ -11,44 +11,61 @@ import { addNotes, deleteNotes, updateNotes } from "../redux/slicers/NotesSlice"
 
 const index = () => {
     
-  const [data, setData] = useState({
-    title:'',
-    body:'',
-    createdAt:'',
-    archived:false,
-    id:uuid()
-  })
-  const [show, setShow] = useState(false)
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(data);
-    if (data?.title !== '' && data?.body !== ''){
-        const newNote = {
-            ...data,
-            createdAt: new Date().toLocaleDateString()
-        };
-        dispatch(addNotes(newNote))
-    }
-    // setShow(false)
-    handleClose()
-  }
-
-  const handleClose=()=>{
-    setShow(false)
-    setData({
-        id:'',
+    const [data, setData] = useState({
         title:'',
         body:'',
-        archived:'',
-        date:''
+        createdAt:'',
+        archived:false,
+        id:uuid()
     })
-  }
+    const [show, setShow] = useState(false)
+    const [showEdit, setShowEdit] = useState(false)
     const [archivedData, setArchivedData] = useState([]);
     const [activeData, setActiveData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [number, setNumber] = useState(50)
     const notes = useSelector(state=>state.note.notes)
     const dispatch = useDispatch()
-    console.log(notes);
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const dataIndex = notes.findIndex(item => item.id === data.id)
+        console.log(dataIndex, 'idn');
+        if(dataIndex === -1){
+            const newNote = {
+                ...data,
+                createdAt: new Date().toLocaleDateString()
+            };
+            dispatch(addNotes(newNote))
+        } else{
+            const editData = [...notes]
+            editData.splice(dataIndex,1,data)
+            dispatch(updateNotes(editData))
+        }
+        handleClose()
+    }
+
+    const handleClose=()=>{
+        setShow(false)
+        setShowEdit(false)
+        setNumber(50)
+        setData({
+            id:uuid(),
+            title:'',
+            body:'',
+            archived:false,
+            date:new Date().toLocaleDateString()
+    })}
+    
+    const showFormattedDate = (date) => {
+        const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+        }
+        return new Date(date).toLocaleDateString("id-ID", options)
+    }
+  
     const processData = (data) => {
         const archived = data.filter((item) =>
             item.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -71,7 +88,6 @@ const index = () => {
     const handleArchived = (id, shouldArchive) => {
         const dataIndex = notes.findIndex(item => item.id === id);
         if (dataIndex !== -1) {
-            // const updatedNotes = [...notes];
             const updatedNotes = JSON.parse(JSON.stringify(notes)); 
        
             updatedNotes[dataIndex].archived = shouldArchive;
@@ -89,7 +105,21 @@ const index = () => {
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
-    
+    // const maxLength = 50; 
+
+    // const handleChangeInput = (e) => {
+    //     const inputText = e.target.value;
+    //     const remainingChars = maxLength - inputText.length;
+
+    //     if (remainingChars >= 0) {
+    //         setData((prevState) => ({
+    //             ...prevState,
+    //             title: inputText,
+    //         }));
+    //         setNumber(remainingChars);
+    //     }
+    // };
+
     return(
         <>
             <Navbar
@@ -97,18 +127,22 @@ const index = () => {
                 onChange={handleSearch}
             />
                 <Form
-                    number={50}
-                    show={show}
+                    number={number}
+                    show={show || showEdit}
                     modalTitle={'Buat Catatan'}
                     handleClose={handleClose}
                     onSubmit={handleSubmit} 
-                    // onClick
-                    onChangeInput= {(e) => {
-                    setData((filledState) => ({
-                    ...filledState,
-                    title: e.target.value,
-                    }));
-                }}
+                    onChangeInput={(e)=>{
+                        const remainingChars = 50 - e.target.value.length;
+
+                        if (remainingChars >= 0) {
+                            setData((prevState) => ({
+                                ...prevState,
+                                title: e.target.value,
+                            }));
+                            setNumber(remainingChars);
+                        }
+                    }}
                     onChangeTextarea={(e)=>{
                     setData((filledState)=>({
                         ...filledState,
@@ -150,32 +184,41 @@ const index = () => {
                 <h3 style={{color:'var(--light)'}}>NOTES</h3>
                 <div className="scrolling-wrapper">
                     {
-                        activeData ?
+                        activeData && activeData.length > 0 ?
                         activeData?.map((item)=>(
-                            <div className="card col-lg-3 col-md-4 col-6"> 
-                                <Card
-                                    key={item.id}
-                                    note={item.body}
-                                    title={item.title}
-                                    createdAt={item.createdAt}
-                                    textBtn={'Archieve'}
-                                    classNameBtn={'btnNote col-12 rounded-4'}
-                                    styleEdit={{color:'var(--info-light)'}}
-                                    styleDiv={{
-                                        color:'var(--light)',
-                                        backgroundColor:'var(--primary)'
-                                    }}
-                                    // onClickBtn={()=>handleBtnNote(item.id)}
-                                    onClickBtn={()=>
-                                        handleArchived(item.id, true)
-                                    }
-                                    onClickDelete={()=>handleDelete(item.id)}
-                                    />
-                    </div>
-                            ))
-                                :
-                                <p>no data</p>
-                            }
+                        <div className="card col-lg-3 col-md-4 col-6"> 
+                            <Card
+                                key={item.id}
+                                note={item.body}
+                                title={item.title}
+                                createdAt={showFormattedDate(item.createdAt)}
+                                textBtn={'Archieve'}
+                                classNameBtn={'btnNote col-12 rounded-4'}
+                                styleEdit={{color:'var(--info-light)'}}
+                                styleDiv={{
+                                    color:'var(--light)',
+                                    backgroundColor:'var(--primary)'
+                                }}
+                                onClickBtn={()=>
+                                    handleArchived(item.id, true)
+                                }
+                                onClickDelete={()=>handleDelete(item.id)}
+                                onClickEdit={() => {
+                                    setShowEdit(true);
+                                    setData({
+                                        id:item.id,
+                                        title:item.title,
+                                        body:item.body,
+                                        createdAt:item.createdAt,
+                                        archived:item.archived
+                                    })
+                                }}
+                                />
+                            </div>
+                        ))
+                        :
+                            <p style={{color:'var(--light)'}}>Tidak ada catatan</p>
+                        }
                 </div>
             </div>
 
@@ -185,30 +228,39 @@ const index = () => {
                 <h3 style={{color:'var(--light)'}}>ARCHIEVED</h3>
                 <div className="scrolling-wrapper">
                     {
-                        archivedData ?
+                        archivedData && archivedData.length > 0?
                         archivedData?.map((item)=>(
                             <div className="card col-lg-3 col-md-4 col-6"> 
                                 <Card
                                     key={item.id}
                                     note={item.body}
                                     title={item.title}
-                                    createdAt={item.createdAt}
-                                    textBtn={'Archieve'}
+                                    createdAt={showFormattedDate(item.createdAt)}
+                                    textBtn={'Pindahkan'}
                                     classNameBtn={'btnArchieve col-12 rounded-4'}
                                     styleEdit={{color:'var(--info)'}}
                                     styleDiv={{
                                         color:'var(--primary)',
                                         backgroundColor:'var(--light)'
                                     }}
-                                    // onClickBtn={()=>handleBtnArchieved(item.id)}
                                     onClickBtn={()=>
-                                        handleArchived(item.id, false)}
+                                        handleArchived(item.id,false)}
                                     onClickDelete={()=>handleDelete(item.id)}
+                                    onClickEdit={() => {
+                                        setShowEdit(true);
+                                        setData({
+                                            id:item.id,
+                                            title:item.title,
+                                            body:item.body,
+                                            createdAt:item.createdAt,
+                                            archived:item.archived
+                                        })
+                                    }}
                                     />
-                    </div>
+                                </div>
                             ))
-                                :
-                                <p>no data</p>
+                            :
+                                <p style={{color:'var(--light)'}}>Tidak ada catatan</p>
                             }
                 </div>
             </div>

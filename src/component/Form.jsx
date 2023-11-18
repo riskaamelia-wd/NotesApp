@@ -42,15 +42,30 @@ const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTexta
                             onChange={onChangeTextarea}
                             ></textarea>
                         <div
-                            className={'col-5 m-auto'}
+                            className={'col-5 m-auto '}
                         >
-                            <Button
-                                className={'col-12 rounded-3 btnBuat'}
-                                text={'Buat'}
-                                type={'submit'}
-                                // onClick={onClickBtn}
-                                style={{color:'var(--light)', backgroundColor:'var(--primary)'}}
-                            />
+                            {
+                                valueInput !== '' && valueTextarea !== ''?(
+                                    <Button
+                                    className={'col-12 modal-bg rounded-3 bg-success text-white'}
+                                    text={'Buat'}
+                                    type={'submit'}
+                                    // onClick={onClickBtn}
+                                    style={{color:'var(--light)', backgroundColor:'var(--primary)'}}
+                                />
+                                )
+                                :
+                                (
+                                    <button
+                                      id="disabledbutton"
+                                      className="btn rounded-3 col-12 fw-semibold"
+                                      style={{ backgroundColor: "#DFDFDF" }}
+                                      disabled
+                                          >
+                                      Buat
+                                    </button>
+                                  )
+                            }
                         </div>
                     </form>
                 </Modal.Body>
