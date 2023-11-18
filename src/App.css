@@ -24,8 +24,7 @@
 
 .btnArchieve{
   background-color: var(--success) !important;
-  color: var(--primary) !important;
-  font-size: 10px !important;
+  color: var(--light) !important;
   font-size: 12px !important;
 }
 

@@ -1,20 +1,21 @@
-import { combineReducers, createStore } from "@reduxjs/toolkit";
-import { notesSlice } from "./slicers/productSlice";
+import { combineReducers } from 'redux'
+import { configureStore, createStore } from "@reduxjs/toolkit";
 import storage from 'redux-persist/lib/storage'
-import { persistReducer, persistStore } from "redux-persist";
+import { persistReducer, persistStore } from "redux-persist"
+import NotesSlice from './slicers/NotesSlice';
 
 const reducers = combineReducers({
-    note: notesSlice
+    note: NotesSlice
 })
 
-const persistConfig = {
-    key:'root',
+const persistconfig = {
+    key: 'root',
     storage
 }
 
-const persistedReducer = persistReducer(persistConfig, reducers)
+const persistedReducer = persistReducer(persistconfig, reducers)
 
 const store = createStore(persistedReducer)
 const persistor = persistStore(store)
 
-export {store, persistor}
+export { store, persistor }

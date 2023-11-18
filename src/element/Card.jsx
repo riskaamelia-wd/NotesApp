@@ -1,6 +1,6 @@
 import Button from "./Button"
 
-const Card = ({title, date, note, styleEdit, styleDiv, styleBtn, classNameBtn, textBtn}) => {
+const Card = ({title, createdAt, note, onClickBtn, styleEdit, styleDiv, styleBtn, classNameBtn, textBtn, onClickDelete, onClickEdit}) => {
     return(
         <div 
             style={styleDiv}
@@ -14,7 +14,7 @@ const Card = ({title, date, note, styleEdit, styleDiv, styleBtn, classNameBtn, t
                     <small 
                         className="fw-lighter " 
                         style={{fontSize:'10px'}}
-                    >{date}</small>
+                    >{createdAt}</small>
                 </div>
                 <div className="col-2 col-md-1 m-0 p-0 d-flex justify-content-end">
                     <Button
@@ -23,11 +23,13 @@ const Card = ({title, date, note, styleEdit, styleDiv, styleBtn, classNameBtn, t
                             color:'var(--danger)'
                         }}
                         text={<i className="bi bi-trash3"></i>}
+                        onClick={onClickDelete}
                     />
                     <Button
                         className={'m-0 p-0 ms-2'}
                         style={styleEdit}
                         text={<i className="bi bi-pencil-square"></i>}
+                        onClick={onClickEdit}
                     />
                 </div>
             </div>
@@ -43,6 +45,7 @@ const Card = ({title, date, note, styleEdit, styleDiv, styleBtn, classNameBtn, t
                         style={styleBtn}
                         className={classNameBtn}
                         text={textBtn}
+                        onClick={onClickBtn}
                     />
                 </div>
         </div>

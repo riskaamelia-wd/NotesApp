@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HorizontalScroll from "../component/HorizontalScroll";
 import ModalForm from "../component/ModalForm";
 import Navbar from "../component/Navbar";
 import {v4 as uuid} from 'uuid';
 import Form from "../component/Form";
 import Button from "../element/Button";
+import { useDispatch, useSelector } from "react-redux";
+import Card from "../element/Card";
+import { addNotes, deleteNotes, updateNotes } from "../redux/slicers/NotesSlice";
 
 const index = () => {
     
@@ -16,16 +19,15 @@ const index = () => {
     id:uuid()
   })
   const [show, setShow] = useState(false)
-  const handle = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     console.log(data);
     if (data?.title !== '' && data?.body !== ''){
-        setData((filledState)=>({
-            ...filledState,
-            title: data?.title,
-            body: data?.body,
-            createdAt:new Date()
-        }))
+        const newNote = {
+            ...data,
+            createdAt: new Date().toLocaleDateString()
+        };
+        dispatch(addNotes(newNote))
     }
     // setShow(false)
     handleClose()
@@ -33,14 +35,49 @@ const index = () => {
 
   const handleClose=()=>{
     setShow(false)
-    // setData({
-    //     id:'',
-    //     title:'',
-    //     body:'',
-    //     archived:'',
-    //     date:''
-    // })
+    setData({
+        id:'',
+        title:'',
+        body:'',
+        archived:'',
+        date:''
+    })
   }
+  const [archivedData, setArchivedData] = useState([]);
+  const [activeData, setActiveData] = useState([]);
+    const notes = useSelector(state=>state.note.notes)
+    const dispatch = useDispatch()
+    console.log(notes);
+    const processData = (data) => {
+        const archived = data.filter(item => item.archived === true);
+        const active = data.filter(item => item.archived === false);
+        setArchivedData(archived);
+        setActiveData(active);
+    };
+    useEffect(() => {
+        processData(notes);
+        console.log(notes, 'fdat');
+        // setData(notes)
+    }, [notes, data]);
+
+    const handleArchived = (id, shouldArchive) => {
+        const dataIndex = notes.findIndex(item => item.id === id);
+        if (dataIndex !== -1) {
+            // const updatedNotes = [...notes];
+            const updatedNotes = JSON.parse(JSON.stringify(notes)); 
+       
+            updatedNotes[dataIndex].archived = shouldArchive;
+            dispatch(updateNotes(updatedNotes));
+        } else {
+            console.log('Item not found');
+        }
+    };
+
+    const handleDelete = (id) =>{
+        dispatch(deleteNotes(id))
+    }
+    
+    
     return(
         <>
             <Navbar/>
@@ -49,7 +86,7 @@ const index = () => {
                     show={show}
                     modalTitle={'Buat Catatan'}
                     handleClose={handleClose}
-                    onClickBtn={handle} 
+                    onSubmit={handleSubmit} 
                     // onClick
                     onChangeInput= {(e) => {
                     setData((filledState) => ({
@@ -70,12 +107,96 @@ const index = () => {
                 />
                 
             {/* { data !== '' ? */}
-            <HorizontalScroll
+            {/* <HorizontalScroll
+                // key={id}
                 header={'Notes'}
-                body={data?.body}
-                title={data?.title}
-                date={data?.date}
+                data={activeData}
+                textBtn={'Archieve'}
+                classNameBtn={'btnNote col-12 rounded-4'}
+                styleEdit={{color:'var(--info-light)'}}
+                styleDiv={{
+                    color:'var(--light)',
+                    backgroundColor:'var(--primary)'
+                }}
+                setForm={setNote}
             />
+            <HorizontalScroll
+                header={'ARCHIEVE'}
+                data={archivedData}
+                textBtn={'Pindahkan'}
+                classNameBtn={'btnArchieve col-12 rounded-4'}
+                styleEdit={{color:'var(--info)'}}
+                styleDiv={{
+                    color:'var(--primary)',
+                    backgroundColor:'var(--light)'
+                }}
+            /> */}
+            <div className="ms-5 ps-5 mt-5">
+                <h3 style={{color:'var(--light)'}}>NOTES</h3>
+                <div className="scrolling-wrapper">
+                    {
+                        activeData ?
+                        activeData?.map((item)=>(
+                            <div className="card col-lg-3 col-md-4 col-6"> 
+                                <Card
+                                    key={item.id}
+                                    note={item.body}
+                                    title={item.title}
+                                    createdAt={item.createdAt}
+                                    textBtn={'Archieve'}
+                                    classNameBtn={'btnNote col-12 rounded-4'}
+                                    styleEdit={{color:'var(--info-light)'}}
+                                    styleDiv={{
+                                        color:'var(--light)',
+                                        backgroundColor:'var(--primary)'
+                                    }}
+                                    // onClickBtn={()=>handleBtnNote(item.id)}
+                                    onClickBtn={()=>
+                                        handleArchived(item.id, true)
+                                    }
+                                    onClickDelete={()=>handleDelete(item.id)}
+                                    />
+                    </div>
+                            ))
+                                :
+                                <p>no data</p>
+                            }
+                </div>
+            </div>
+
+
+
+            <div className="ms-5 ps-5 mt-5">
+                <h3 style={{color:'var(--light)'}}>ARCHIEVED</h3>
+                <div className="scrolling-wrapper">
+                    {
+                        archivedData ?
+                        archivedData?.map((item)=>(
+                            <div className="card col-lg-3 col-md-4 col-6"> 
+                                <Card
+                                    key={item.id}
+                                    note={item.body}
+                                    title={item.title}
+                                    createdAt={item.createdAt}
+                                    textBtn={'Archieve'}
+                                    classNameBtn={'btnArchieve col-12 rounded-4'}
+                                    styleEdit={{color:'var(--info)'}}
+                                    styleDiv={{
+                                        color:'var(--primary)',
+                                        backgroundColor:'var(--light)'
+                                    }}
+                                    // onClickBtn={()=>handleBtnArchieved(item.id)}
+                                    onClickBtn={()=>
+                                        handleArchived(item.id, false)}
+                                    onClickDelete={()=>handleDelete(item.id)}
+                                    />
+                    </div>
+                            ))
+                                :
+                                <p>no data</p>
+                            }
+                </div>
+            </div>
             <Button
                 type={'submit'}
                 onClick={() => {

@@ -2,7 +2,7 @@ import { Modal } from "react-bootstrap"
 import Button from "../element/Button"
 // import  './style.css'
 
-const Form = ({number, show, handleClose, onClickBtn, onChangeInput, onChangeTextarea, nameInput, nameTextarea, valueInput, valueTextarea, modalTitle}) => {
+const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTextarea, nameInput, nameTextarea, valueInput, valueTextarea, modalTitle}) => {
     return(
         <>
             <Modal show={show} 
@@ -20,7 +20,7 @@ const Form = ({number, show, handleClose, onClickBtn, onChangeInput, onChangeTex
                 >
                     <p className="fs-3 m-0 fw-bold modal-bg">{modalTitle}</p>
                     <p className="m-0 text-end fw-semibold mb-1">Sisa Karakter : {number}</p> 
-                    <form>
+                    <form onSubmit={onSubmit}>
                         <input 
                             type="text" 
                             placeholder="Ini adalah judul ..."
