@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import HorizontalScroll from "../component/HorizontalScroll";
 import ModalForm from "../component/ModalForm";
 import Navbar from "../component/Navbar";
@@ -8,9 +8,9 @@ import Button from "../element/Button";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "../element/Card";
 import { addNotes, deleteNotes, updateNotes } from "../redux/slicers/NotesSlice";
+import { useScroll, motion } from "framer-motion";
 
 const index = () => {
-    
     const [data, setData] = useState({
         title:'',
         body:'',
@@ -33,7 +33,7 @@ const index = () => {
         if(dataIndex === -1){
             const newNote = {
                 ...data,
-                createdAt: new Date().toLocaleDateString()
+                createdAt: new Date()
             };
             dispatch(addNotes(newNote))
         } else{
@@ -53,7 +53,7 @@ const index = () => {
             title:'',
             body:'',
             archived:false,
-            date:new Date().toLocaleDateString()
+            date:new Date()
     })}
     
     const showFormattedDate = (date) => {
@@ -81,8 +81,16 @@ const index = () => {
         setArchivedData(archived);
         setActiveData(active);
     };
+
+    const ref1 = useRef(null);
+    const ref2 = useRef(null);
+    const { scrollXProgress: scrollXProgress1 } = useScroll({ container: ref1, layoutEffect: false });
+    const { scrollXProgress: scrollXProgress2 } = useScroll({ container: ref2, layoutEffect: false });
+  
     useEffect(() => {
         processData(notes);
+        ref1.current = document.querySelector('#cardNotes');
+        ref2.current = document.querySelector('#cardArchieves');
     }, [notes, data, searchTerm]);
 
     const handleArchived = (id, shouldArchive) => {
@@ -119,9 +127,9 @@ const index = () => {
     //         setNumber(remainingChars);
     //     }
     // };
-
+  
     return(
-        <>
+        <div className="pb-5">
             <Navbar
                 value={searchTerm}
                 onChange={handleSearch}
@@ -181,12 +189,32 @@ const index = () => {
                 }}
             /> */}
             <div className="ms-5 ps-5 mt-5">
-                <h3 style={{color:'var(--light)'}}>NOTES</h3>
-                <div className="scrolling-wrapper">
+                <div className="d-flex flex-row justify-content-between">
+                    <h3 className="mt-4" style={{color:'var(--light)'}}>NOTES</h3>
+                    <svg id="progress" width="80" height="80" viewBox="0 0 100 100" >
+                        <circle  cx="50" cy="50" r="30" pathLength="1" className="bg" />
+                        <motion.circle
+                        cx="50"
+                        cy="50"
+                        r="30"
+                        pathLength="1"
+                        className="indicator"
+                        style={{ pathLength: scrollXProgress1}}
+                        />
+                    </svg>
+                </div>
+                <div id="cardNotes" className="scrolling-wrapper">
                     {
                         activeData && activeData.length > 0 ?
                         activeData?.map((item)=>(
-                        <div className="card col-lg-3 col-md-4 col-6"> 
+                        <motion.div
+                            key={item.id}
+                            className="card col-lg-3 -3 col-md-4 col-6"
+                            whileHover={{ scale: 1.1, marginLeft:'20px', marginRight:'20px' }} 
+                            initial={{ opacity: 0, y: 20 }} 
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
                             <Card
                                 key={item.id}
                                 note={item.body}
@@ -214,10 +242,10 @@ const index = () => {
                                     })
                                 }}
                                 />
-                            </div>
+                            </motion.div>
                         ))
                         :
-                            <p style={{color:'var(--light)'}}>Tidak ada catatan</p>
+                            <p className="col-12 text-center" style={{color:'var(--light)'}}>Tidak ada catatan</p>
                         }
                 </div>
             </div>
@@ -225,12 +253,33 @@ const index = () => {
 
 
             <div className="ms-5 ps-5 mt-5">
-                <h3 style={{color:'var(--light)'}}>ARCHIEVED</h3>
-                <div className="scrolling-wrapper">
+                <div className="d-flex flex-row justify-content-between">
+                    <h3 className="mt-4" style={{color:'var(--light)'}}>ARCHIEVED</h3>
+                    <svg id="progress" width="80" height="80" viewBox="0 0 100 100" >
+                        <circle  cx="50" cy="50" r="30" pathLength="1" className="bg" />
+                        <motion.circle
+                        cx="50"
+                        cy="50"
+                        r="30"
+                        pathLength="1"
+                        className="indicator"
+                        style={{ pathLength: scrollXProgress2}}
+                        />
+                    </svg>
+                </div>
+                <div id="cardArchieves" className="scrolling-wrapper">
                     {
                         archivedData && archivedData.length > 0?
                         archivedData?.map((item)=>(
-                            <div className="card col-lg-3 col-md-4 col-6"> 
+                            // <div className="card col-lg-3 col-md-4 col-6"> 
+                            <motion.div
+                                key={item.id}
+                                className="card col-lg-3 -3 col-md-4 col-6"
+                                whileHover={{ scale: 1.1, marginLeft:'20px', marginRight:'20px' }} 
+                                initial={{ opacity: 0, y: 20 }} 
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                            >
                                 <Card
                                     key={item.id}
                                     note={item.body}
@@ -257,10 +306,11 @@ const index = () => {
                                         })
                                     }}
                                     />
-                                </div>
+                                {/* </div> */}
+                                </motion.div>
                             ))
                             :
-                                <p style={{color:'var(--light)'}}>Tidak ada catatan</p>
+                                <p className=" col-12 text-center" style={{color:'var(--light)'}}>Tidak ada catatan</p>
                             }
                 </div>
             </div>
@@ -278,7 +328,7 @@ const index = () => {
             }
             />
             {/* } */}
-        </>
+        </div>
     )
 }
 

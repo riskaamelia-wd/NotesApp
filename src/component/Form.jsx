@@ -1,6 +1,6 @@
 import { Modal } from "react-bootstrap"
 import Button from "../element/Button"
-// import  './style.css'
+import  './style.css'
 
 const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTextarea, nameInput, nameTextarea, valueInput, valueTextarea, modalTitle}) => {
     return(
@@ -15,16 +15,16 @@ const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTexta
                     </Modal.Title>
                 </Modal.Header> */}
                 <Modal.Body 
-                className="modal-bg"
+                className="modal-bg rounded-3"
                 // style={{color:'var(--primary)'}}
                 >
-                    <p className="fs-3 m-0 fw-bold modal-bg">{modalTitle}</p>
-                    <p className="m-0 text-end fw-semibold mb-1">Sisa Karakter : {number}</p> 
+                    <p className="fs-3 m-0 fw-bold textColor">{modalTitle}</p>
+                    <p className="m-0 text-end fw-semibold mb-1 textColor">Sisa Karakter : {number}</p> 
                     <form onSubmit={onSubmit}>
                         <input 
                             type="text" 
                             placeholder="Ini adalah judul ..."
-                            className="btnBuat form-control border border-0 rounded-3"
+                            className="bgInput textColor form-control border border-0 rounded-3"
                             style={{color:'var(--primary)', backgroundColor:'var(--secondary)'}}
                             name={nameInput} 
                             id={nameInput}
@@ -34,7 +34,7 @@ const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTexta
                         <textarea 
                             rows="6"
                             placeholder="Tuliskan catatanmu di sini"
-                            className="form-control border border-0 mt-3 mb-4 rounded-3"
+                            className="form-control border bgInput textColor border-0 mt-3 mb-4 rounded-3"
                             style={{color:'var(--primary)', backgroundColor:'var(--secondary)'}}
                             name={nameTextarea} 
                             id={nameTextarea}
@@ -47,7 +47,7 @@ const Form = ({number, show, handleClose, onSubmit, onChangeInput, onChangeTexta
                             {
                                 valueInput !== '' && valueTextarea !== ''?(
                                     <Button
-                                    className={'col-12 modal-bg rounded-3 bg-success text-white'}
+                                    className={'col-12  rounded-3 btnModal'}
                                     text={'Buat'}
                                     type={'submit'}
                                     // onClick={onClickBtn}
